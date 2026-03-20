@@ -86,6 +86,13 @@ const MainMenu = ({ onNavigate, points, medals, onLogout }: MainMenuProps) => {
           <span className="text-2xl">👨‍👩‍👧</span>
           <span className="text-xs font-bold">Padres</span>
         </button>
+        <button
+          onClick={onLogout}
+          className="flex flex-col items-center gap-1 text-destructive"
+        >
+          <span className="text-2xl">🚪</span>
+          <span className="text-xs font-bold">Salir</span>
+        </button>
       </div>
     </div>
   );

@@ -56,7 +56,7 @@ const Index = () => {
     case "onboarding":
       return <Onboarding onComplete={goMenu} />;
     case "menu":
-      return <MainMenu onNavigate={setScreen} points={points} medals={earnedMedals} />;
+      return <MainMenu onNavigate={setScreen} points={points} medals={earnedMedals} onLogout={handleLogout} />;
     case "words":
       return <WordGame onBack={goMenu} onPoints={addPoints} />;
     case "repeat":
