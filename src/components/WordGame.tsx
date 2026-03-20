@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { speakWord, speakCelebration } from "@/lib/speech";
 
 interface WordGameProps {
   onBack: () => void;
@@ -47,12 +48,21 @@ const WordGame = ({ onBack, onPoints }: WordGameProps) => {
 
   const current = wordSets[currentIndex];
 
+  useEffect(() => {
+    speakWord(current.word);
+  }, [currentIndex]);
+
   const handleSelect = (idx: number) => {
     if (selected !== null) return;
     setSelected(idx);
     const correct = idx === current.correct;
     setIsCorrect(correct);
-    if (correct) setScore((s) => s + 10);
+    if (correct) {
+      setScore((s) => s + 10);
+      speakCelebration("¡Correcto!");
+    } else {
+      speakCelebration("Intenta de nuevo");
+    }
 
     setTimeout(() => {
       if (currentIndex < wordSets.length - 1) {

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { speakWord, speakSound, speakCelebration } from "@/lib/speech";
 
 interface MiniGameProps {
   onBack: () => void;
@@ -20,7 +21,12 @@ const MiniGame = ({ onBack, onPoints }: MiniGameProps) => {
 
   const current = animals[currentIndex];
 
+  useEffect(() => {
+    speakWord(current.name);
+  }, [currentIndex]);
+
   const handleAnimalTap = () => {
+    speakSound(current.sound);
     setShowSound(true);
     setScore((s) => s + 5);
 

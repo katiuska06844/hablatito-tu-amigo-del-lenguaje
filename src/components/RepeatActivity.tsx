@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { speakSyllable, speakWord, speakCelebration } from "@/lib/speech";
 
 interface RepeatActivityProps {
   onBack: () => void;
@@ -21,7 +22,12 @@ const RepeatActivity = ({ onBack, onPoints }: RepeatActivityProps) => {
 
   const current = phrases[currentIndex];
 
+  useEffect(() => {
+    speakWord(current.text.replace("-", ""));
+  }, [currentIndex]);
+
   const handleSyllableTap = (idx: number) => {
+    speakSyllable(current.syllables[idx]);
     setActiveSyllable(idx);
     setTimeout(() => {
       if (idx === current.syllables.length - 1) {
