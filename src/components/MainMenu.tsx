@@ -14,7 +14,7 @@ const menuItems = [
   { id: "rewards", label: "Premios", icon: "🏅", color: "bg-accent" },
 ];
 
-const MainMenu = ({ onNavigate, points, medals }: MainMenuProps) => {
+const MainMenu = ({ onNavigate, points, medals, onLogout }: MainMenuProps) => {
   return (
     <div className="app-shell flex flex-col min-h-dvh bg-background px-5 py-6">
       {/* Header */}
