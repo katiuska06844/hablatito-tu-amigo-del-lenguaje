@@ -39,6 +39,15 @@ const ParentModule = ({ onBack, onLogout }: ParentModuleProps) => {
           </div>
         ))}
       </div>
+
+      {onLogout && (
+        <button
+          onClick={onLogout}
+          className="mt-6 text-sm font-bold text-destructive text-center py-3"
+        >
+          Cerrar sesión
+        </button>
+      )}
     </div>
   );
 };
