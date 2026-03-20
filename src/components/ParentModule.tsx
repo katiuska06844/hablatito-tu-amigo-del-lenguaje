@@ -1,5 +1,6 @@
 interface ParentModuleProps {
   onBack: () => void;
+  onLogout?: () => void;
 }
 
 const tips = [
