@@ -31,8 +31,6 @@ const phrasesByLevel: Record<DifficultyLevel, Phrase[]> = {
   ],
 };
 
-const level1 = phrasesByLevel[1];
-
 const RepeatActivity = ({ onBack, onPoints }: RepeatActivityProps) => {
   const [level, setLevel] = useState<DifficultyLevel>(() => getLevel("repeat"));
   const phrases = phrasesByLevel[level];

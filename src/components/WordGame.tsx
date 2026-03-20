@@ -33,8 +33,6 @@ const wordsByLevel: Record<DifficultyLevel, WordSet[]> = {
   ],
 };
 
-const level1Words = wordsByLevel[1];
-
 const WordGame = ({ onBack, onPoints }: WordGameProps) => {
   const [level, setLevel] = useState<DifficultyLevel>(() => getLevel("words"));
   const words = wordsByLevel[level];

@@ -31,8 +31,6 @@ const animalsByLevel: Record<DifficultyLevel, Animal[]> = {
   ],
 };
 
-const level1 = animalsByLevel[1];
-
 const MiniGame = ({ onBack, onPoints }: MiniGameProps) => {
   const [level, setLevel] = useState<DifficultyLevel>(() => getLevel("games"));
   const animals = animalsByLevel[level];
