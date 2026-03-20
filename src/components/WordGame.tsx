@@ -7,8 +7,9 @@ interface WordGameProps {
   onPoints: (pts: number) => void;
 }
 
-// Content pools by difficulty
-const wordsByLevel: Record<DifficultyLevel, typeof level1Words> = {
+type WordSet = { word: string; emoji: string; options: string[]; correct: number };
+
+const wordsByLevel: Record<DifficultyLevel, WordSet[]> = {
   1: [
     { word: "Gato", emoji: "🐱", options: ["🐱", "🐶"], correct: 0 },
     { word: "Sol", emoji: "☀️", options: ["☀️", "🌙"], correct: 0 },
