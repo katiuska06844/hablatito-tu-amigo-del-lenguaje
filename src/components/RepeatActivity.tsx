@@ -22,6 +22,10 @@ const RepeatActivity = ({ onBack, onPoints }: RepeatActivityProps) => {
 
   const current = phrases[currentIndex];
 
+  useEffect(() => {
+    speakWord(current.text.replace("-", ""));
+  }, [currentIndex]);
+
   const handleSyllableTap = (idx: number) => {
     setActiveSyllable(idx);
     setTimeout(() => {
