@@ -48,6 +48,10 @@ const WordGame = ({ onBack, onPoints }: WordGameProps) => {
 
   const current = wordSets[currentIndex];
 
+  useEffect(() => {
+    speakWord(current.word);
+  }, [currentIndex]);
+
   const handleSelect = (idx: number) => {
     if (selected !== null) return;
     setSelected(idx);
