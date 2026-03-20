@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { speakWord, speakSound, speakCelebration } from "@/lib/speech";
 
 interface MiniGameProps {
   onBack: () => void;

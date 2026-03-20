@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { speakWord, speakCelebration } from "@/lib/speech";
 
 interface WordGameProps {
   onBack: () => void;
