@@ -26,6 +26,7 @@ const MiniGame = ({ onBack, onPoints }: MiniGameProps) => {
   }, [currentIndex]);
 
   const handleAnimalTap = () => {
+    speakSound(current.sound);
     setShowSound(true);
     setScore((s) => s + 5);
 

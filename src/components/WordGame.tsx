@@ -57,7 +57,12 @@ const WordGame = ({ onBack, onPoints }: WordGameProps) => {
     setSelected(idx);
     const correct = idx === current.correct;
     setIsCorrect(correct);
-    if (correct) setScore((s) => s + 10);
+    if (correct) {
+      setScore((s) => s + 10);
+      speakCelebration("¡Correcto!");
+    } else {
+      speakCelebration("Intenta de nuevo");
+    }
 
     setTimeout(() => {
       if (currentIndex < wordSets.length - 1) {
