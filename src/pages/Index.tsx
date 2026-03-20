@@ -1,16 +1,47 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import Onboarding from "@/components/Onboarding";
+import MainMenu from "@/components/MainMenu";
+import WordGame from "@/components/WordGame";
+import RepeatActivity from "@/components/RepeatActivity";
+import MiniGame from "@/components/MiniGame";
+import Rewards from "@/components/Rewards";
+import ParentModule from "@/components/ParentModule";
+import Progress from "@/components/Progress";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
-  return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
-    </div>
-  );
+const Index = () => {
+  const [screen, setScreen] = useState("onboarding");
+  const [points, setPoints] = useState(0);
+  const [gamesPlayed, setGamesPlayed] = useState(0);
+
+  const earnedMedals = [10, 30, 50, 100, 200, 500].filter((r) => points >= r).length;
+
+  const addPoints = (pts: number) => {
+    setPoints((p) => p + pts);
+    setGamesPlayed((g) => g + 1);
+  };
+
+  const goMenu = () => setScreen("menu");
+
+  switch (screen) {
+    case "onboarding":
+      return <Onboarding onComplete={goMenu} />;
+    case "menu":
+      return <MainMenu onNavigate={setScreen} points={points} medals={earnedMedals} />;
+    case "words":
+      return <WordGame onBack={goMenu} onPoints={addPoints} />;
+    case "repeat":
+      return <RepeatActivity onBack={goMenu} onPoints={addPoints} />;
+    case "games":
+      return <MiniGame onBack={goMenu} onPoints={addPoints} />;
+    case "rewards":
+      return <Rewards onBack={goMenu} points={points} medals={earnedMedals} />;
+    case "parents":
+      return <ParentModule onBack={goMenu} />;
+    case "progress":
+      return <Progress onBack={goMenu} points={points} gamesPlayed={gamesPlayed} />;
+    default:
+      return <MainMenu onNavigate={setScreen} points={points} medals={earnedMedals} />;
+  }
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
