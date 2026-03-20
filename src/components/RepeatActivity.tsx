@@ -27,6 +27,7 @@ const RepeatActivity = ({ onBack, onPoints }: RepeatActivityProps) => {
   }, [currentIndex]);
 
   const handleSyllableTap = (idx: number) => {
+    speakSyllable(current.syllables[idx]);
     setActiveSyllable(idx);
     setTimeout(() => {
       if (idx === current.syllables.length - 1) {

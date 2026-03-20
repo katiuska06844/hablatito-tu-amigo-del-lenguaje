@@ -12,7 +12,7 @@ const tips = [
   { icon: "❤️", title: "Ten paciencia", text: "Cada niño aprende a su ritmo." },
 ];
 
-const ParentModule = ({ onBack }: ParentModuleProps) => {
+const ParentModule = ({ onBack, onLogout }: ParentModuleProps) => {
   return (
     <div className="app-shell flex flex-col min-h-dvh bg-background px-5 py-6">
       <div className="flex items-center justify-between mb-6">
