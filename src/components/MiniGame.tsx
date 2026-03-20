@@ -7,7 +7,9 @@ interface MiniGameProps {
   onPoints: (pts: number) => void;
 }
 
-const animalsByLevel: Record<DifficultyLevel, typeof level1> = {
+type Animal = { name: string; emoji: string; sound: string };
+
+const animalsByLevel: Record<DifficultyLevel, Animal[]> = {
   1: [
     { name: "Vaca", emoji: "🐄", sound: "Muuu" },
     { name: "Perro", emoji: "🐶", sound: "Guau" },
