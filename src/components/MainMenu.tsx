@@ -1,97 +1,74 @@
+import { useState, useEffect } from "react";
 import titoMascot from "@/assets/tito-mascot.png";
+import LessonsMap from "@/components/LessonsMap";
+import { getStreak, updateStreak } from "@/lib/streak";
 
 interface MainMenuProps {
   onNavigate: (screen: string) => void;
   points: number;
   medals: number;
+  childName: string;
   onLogout: () => void;
 }
 
-const menuItems = [
-  { id: "words", label: "Palabras", icon: "🖼️", color: "bg-primary" },
-  { id: "games", label: "Juegos", icon: "🎮", color: "bg-secondary" },
-  { id: "repeat", label: "Repetir", icon: "🗣️", color: "bg-sky" },
-  { id: "rewards", label: "Premios", icon: "🏅", color: "bg-accent" },
-];
+const MainMenu = ({ onNavigate, points, medals, childName, onLogout }: MainMenuProps) => {
+  const [streak, setStreak] = useState(0);
 
-const MainMenu = ({ onNavigate, points, medals, onLogout }: MainMenuProps) => {
+  useEffect(() => {
+    const s = updateStreak();
+    setStreak(s);
+  }, []);
+
   return (
     <div className="app-shell flex flex-col min-h-dvh bg-background px-5 py-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
-          <img src={titoMascot} alt="Tito" className="w-12 h-12 animate-float" />
+          <img src={titoMascot} alt="Tito" className="w-11 h-11 animate-float" />
           <div>
-            <p className="text-sm font-bold text-muted-foreground">¡Hola!</p>
-            <p className="text-lg font-black text-foreground">HablaTito</p>
+            <p className="text-base font-black text-foreground">¡Hola, {childName}!</p>
           </div>
         </div>
-        <div className="flex gap-2">
-          <div className="bg-accent/30 rounded-2xl px-3 py-1.5 flex items-center gap-1">
-            <span className="text-sm">⭐</span>
-            <span className="text-sm font-bold text-foreground">{points}</span>
-          </div>
-          <div className="bg-primary/20 rounded-2xl px-3 py-1.5 flex items-center gap-1">
-            <span className="text-sm">🏅</span>
-            <span className="text-sm font-bold text-foreground">{medals}</span>
-          </div>
+        <div className="bg-accent/20 rounded-2xl px-3 py-1.5 flex items-center gap-1">
+          <span className="text-base">🔥</span>
+          <span className="text-sm font-black text-foreground">{streak}</span>
         </div>
       </div>
 
-      {/* Greeting card */}
-      <div className="bg-primary/10 rounded-3xl p-5 mb-6 flex items-center gap-4">
-        <span className="text-5xl">👋</span>
-        <div>
-          <p className="font-black text-lg text-foreground">¿Listo para aprender?</p>
-          <p className="text-sm text-muted-foreground font-semibold">
-            Toca una actividad para empezar
-          </p>
-        </div>
-      </div>
-
-      {/* Activity grid */}
-      <div className="grid grid-cols-2 gap-4 flex-1">
-        {menuItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => onNavigate(item.id)}
-            className={`game-card ${item.color} flex flex-col items-center justify-center gap-3 min-h-[140px]`}
-          >
-            <span className="text-5xl">{item.icon}</span>
-            <span className="text-lg font-bold text-primary-foreground">{item.label}</span>
-          </button>
-        ))}
+      {/* Lessons map */}
+      <div className="flex-1 overflow-y-auto">
+        <LessonsMap onNavigate={onNavigate} points={points} />
       </div>
 
       {/* Bottom nav */}
-      <div className="flex justify-around mt-6 pt-4 border-t border-border">
+      <div className="flex justify-around mt-4 pt-3 border-t border-border">
         <button
           onClick={() => onNavigate("menu")}
-          className="flex flex-col items-center gap-1 text-primary"
+          className="flex flex-col items-center gap-0.5 text-primary"
         >
-          <span className="text-2xl">🏠</span>
-          <span className="text-xs font-bold">Inicio</span>
+          <span className="text-xl">🏠</span>
+          <span className="text-[10px] font-bold">Inicio</span>
         </button>
         <button
-          onClick={() => onNavigate("progress")}
-          className="flex flex-col items-center gap-1 text-muted-foreground"
+          onClick={() => onNavigate("achievements")}
+          className="flex flex-col items-center gap-0.5 text-muted-foreground"
         >
-          <span className="text-2xl">📊</span>
-          <span className="text-xs font-bold">Progreso</span>
+          <span className="text-xl">🏆</span>
+          <span className="text-[10px] font-bold">Logros</span>
+        </button>
+        <button
+          onClick={() => onNavigate("profile")}
+          className="flex flex-col items-center gap-0.5 text-muted-foreground"
+        >
+          <span className="text-xl">🧒</span>
+          <span className="text-[10px] font-bold">Perfil</span>
         </button>
         <button
           onClick={() => onNavigate("parents")}
-          className="flex flex-col items-center gap-1 text-muted-foreground"
+          className="flex flex-col items-center gap-0.5 text-muted-foreground"
         >
-          <span className="text-2xl">👨‍👩‍👧</span>
-          <span className="text-xs font-bold">Padres</span>
-        </button>
-        <button
-          onClick={onLogout}
-          className="flex flex-col items-center gap-1 text-destructive"
-        >
-          <span className="text-2xl">🚪</span>
-          <span className="text-xs font-bold">Salir</span>
+          <span className="text-xl">👨‍👩‍👧</span>
+          <span className="text-[10px] font-bold">Padres</span>
         </button>
       </div>
     </div>

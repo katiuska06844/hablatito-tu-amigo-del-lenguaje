@@ -5,9 +5,9 @@ import MainMenu from "@/components/MainMenu";
 import WordGame from "@/components/WordGame";
 import RepeatActivity from "@/components/RepeatActivity";
 import MiniGame from "@/components/MiniGame";
-import Rewards from "@/components/Rewards";
+import Achievements from "@/components/Achievements";
 import ParentModule from "@/components/ParentModule";
-import Progress from "@/components/Progress";
+import UserProfile from "@/components/UserProfile";
 
 const Index = () => {
   const [screen, setScreen] = useState("auth");
@@ -15,7 +15,6 @@ const Index = () => {
   const [points, setPoints] = useState(0);
   const [gamesPlayed, setGamesPlayed] = useState(0);
 
-  // Auto-login if session exists
   useEffect(() => {
     const currentPhone = localStorage.getItem("hablatito_current");
     if (currentPhone) {
@@ -50,27 +49,40 @@ const Index = () => {
     setGamesPlayed(0);
   };
 
+  // Refresh child name when returning to menu (in case profile was edited)
+  const handleBackToMenu = () => {
+    const currentPhone = localStorage.getItem("hablatito_current");
+    if (currentPhone) {
+      const stored = localStorage.getItem(`hablatito_user_${currentPhone}`);
+      if (stored) {
+        const data = JSON.parse(stored);
+        setChildName(data.childName);
+      }
+    }
+    setScreen("menu");
+  };
+
   switch (screen) {
     case "auth":
       return <Auth onAuth={handleAuth} />;
     case "onboarding":
       return <Onboarding onComplete={goMenu} />;
     case "menu":
-      return <MainMenu onNavigate={setScreen} points={points} medals={earnedMedals} onLogout={handleLogout} />;
+      return <MainMenu onNavigate={setScreen} points={points} medals={earnedMedals} childName={childName} onLogout={handleLogout} />;
     case "words":
       return <WordGame onBack={goMenu} onPoints={addPoints} />;
     case "repeat":
       return <RepeatActivity onBack={goMenu} onPoints={addPoints} />;
     case "games":
       return <MiniGame onBack={goMenu} onPoints={addPoints} />;
-    case "rewards":
-      return <Rewards onBack={goMenu} points={points} medals={earnedMedals} />;
+    case "achievements":
+      return <Achievements onBack={goMenu} points={points} medals={earnedMedals} gamesPlayed={gamesPlayed} />;
     case "parents":
       return <ParentModule onBack={goMenu} onLogout={handleLogout} />;
-    case "progress":
-      return <Progress onBack={goMenu} points={points} gamesPlayed={gamesPlayed} />;
+    case "profile":
+      return <UserProfile onBack={handleBackToMenu} />;
     default:
-      return <MainMenu onNavigate={setScreen} points={points} medals={earnedMedals} onLogout={handleLogout} />;
+      return <MainMenu onNavigate={setScreen} points={points} medals={earnedMedals} childName={childName} onLogout={handleLogout} />;
   }
 };
 
