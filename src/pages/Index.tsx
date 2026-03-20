@@ -70,7 +70,7 @@ const Index = () => {
     case "progress":
       return <Progress onBack={goMenu} points={points} gamesPlayed={gamesPlayed} />;
     default:
-      return <MainMenu onNavigate={setScreen} points={points} medals={earnedMedals} />;
+      return <MainMenu onNavigate={setScreen} points={points} medals={earnedMedals} onLogout={handleLogout} />;
   }
 };
 
