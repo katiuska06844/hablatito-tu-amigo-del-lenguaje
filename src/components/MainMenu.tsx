@@ -4,6 +4,7 @@ interface MainMenuProps {
   onNavigate: (screen: string) => void;
   points: number;
   medals: number;
+  onLogout: () => void;
 }
 
 const menuItems = [
