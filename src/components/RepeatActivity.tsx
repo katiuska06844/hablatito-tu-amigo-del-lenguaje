@@ -7,7 +7,9 @@ interface RepeatActivityProps {
   onPoints: (pts: number) => void;
 }
 
-const phrasesByLevel: Record<DifficultyLevel, typeof level1> = {
+type Phrase = { text: string; syllables: string[]; emoji: string };
+
+const phrasesByLevel: Record<DifficultyLevel, Phrase[]> = {
   1: [
     { text: "Ma-má", syllables: ["Ma", "má"], emoji: "👩" },
     { text: "Pa-pá", syllables: ["Pa", "pá"], emoji: "👨" },
