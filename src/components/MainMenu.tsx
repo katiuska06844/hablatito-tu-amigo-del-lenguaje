@@ -4,6 +4,7 @@ interface MainMenuProps {
   onNavigate: (screen: string) => void;
   points: number;
   medals: number;
+  onLogout: () => void;
 }
 
 const menuItems = [
@@ -13,7 +14,7 @@ const menuItems = [
   { id: "rewards", label: "Premios", icon: "🏅", color: "bg-accent" },
 ];
 
-const MainMenu = ({ onNavigate, points, medals }: MainMenuProps) => {
+const MainMenu = ({ onNavigate, points, medals, onLogout }: MainMenuProps) => {
   return (
     <div className="app-shell flex flex-col min-h-dvh bg-background px-5 py-6">
       {/* Header */}
@@ -84,6 +85,13 @@ const MainMenu = ({ onNavigate, points, medals }: MainMenuProps) => {
         >
           <span className="text-2xl">👨‍👩‍👧</span>
           <span className="text-xs font-bold">Padres</span>
+        </button>
+        <button
+          onClick={onLogout}
+          className="flex flex-col items-center gap-1 text-destructive"
+        >
+          <span className="text-2xl">🚪</span>
+          <span className="text-xs font-bold">Salir</span>
         </button>
       </div>
     </div>

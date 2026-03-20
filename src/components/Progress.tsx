@@ -1,3 +1,5 @@
+import { getLevel, getLevelLabel } from "@/lib/adaptive";
+
 interface ProgressProps {
   onBack: () => void;
   points: number;
@@ -8,8 +10,12 @@ const Progress = ({ onBack, points, gamesPlayed }: ProgressProps) => {
   const level = Math.floor(points / 50) + 1;
   const progressToNext = (points % 50) / 50;
 
+  const wordsLevel = getLevel("words");
+  const repeatLevel = getLevel("repeat");
+  const gamesLevel = getLevel("games");
+
   const weekDays = ["L", "M", "Mi", "J", "V", "S", "D"];
-  const activeDays = [true, true, false, true, true, false, false]; // mock
+  const activeDays = [true, true, false, true, true, false, false];
 
   return (
     <div className="app-shell flex flex-col min-h-dvh bg-background px-5 py-6">
@@ -21,7 +27,7 @@ const Progress = ({ onBack, points, gamesPlayed }: ProgressProps) => {
 
       {/* Level card */}
       <div className="bg-primary/10 rounded-3xl p-6 text-center mb-6">
-        <p className="text-muted-foreground font-bold text-sm">Nivel actual</p>
+        <p className="text-muted-foreground font-bold text-sm">Nivel general</p>
         <p className="text-5xl font-black text-primary my-2">{level}</p>
         <div className="w-full bg-muted rounded-full h-4 mt-3">
           <div
@@ -32,6 +38,21 @@ const Progress = ({ onBack, points, gamesPlayed }: ProgressProps) => {
         <p className="text-xs text-muted-foreground font-semibold mt-2">
           {points % 50}/50 para el siguiente nivel
         </p>
+      </div>
+
+      {/* Adaptive levels per activity */}
+      <h3 className="text-lg font-black text-foreground mb-3">Dificultad adaptativa</h3>
+      <div className="flex flex-col gap-2 mb-6">
+        {[
+          { label: "🖼️ Palabras", lvl: wordsLevel },
+          { label: "🗣️ Repetir", lvl: repeatLevel },
+          { label: "🎮 Juegos", lvl: gamesLevel },
+        ].map((item) => (
+          <div key={item.label} className="bg-card rounded-2xl p-4 flex items-center justify-between shadow-sm">
+            <span className="font-bold text-foreground">{item.label}</span>
+            <span className="text-sm font-bold text-muted-foreground">{getLevelLabel(item.lvl)}</span>
+          </div>
+        ))}
       </div>
 
       {/* Stats */}
