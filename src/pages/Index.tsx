@@ -76,7 +76,7 @@ const Index = () => {
     case "games":
       return <MiniGame onBack={goMenu} onPoints={addPoints} />;
     case "achievements":
-      return <Achievements onBack={goMenu} points={points} medals={earnedMedals} gamesPlayed={gamesPlayed} />;
+      return <Achievements onBack={goMenu} points={points} medals={earnedMedals} gamesPlayed={gamesPlayed} childName={childName} />;
     case "parents":
       return <ParentModule onBack={goMenu} onLogout={handleLogout} />;
     case "profile":
