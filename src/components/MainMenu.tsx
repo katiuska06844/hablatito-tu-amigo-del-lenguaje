@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import titoMascot from "@/assets/tito-mascot.png";
 import LessonsMap from "@/components/LessonsMap";
-import HelpParents from "@/components/HelpParents";
+
 import { getStreak, updateStreak } from "@/lib/streak";
 
 interface MainMenuProps {
@@ -14,7 +14,7 @@ interface MainMenuProps {
 
 const MainMenu = ({ onNavigate, points, medals, childName, onLogout }: MainMenuProps) => {
   const [streak, setStreak] = useState(0);
-  const [helpOpen, setHelpOpen] = useState(false);
+  
 
   useEffect(() => {
     const s = updateStreak();
@@ -31,20 +31,11 @@ const MainMenu = ({ onNavigate, points, medals, childName, onLogout }: MainMenuP
             <p className="text-base font-black text-foreground">¡Hola, {childName}!</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setHelpOpen(true)}
-            className="bg-secondary/20 rounded-2xl px-2.5 py-1.5 text-sm font-bold text-foreground active:scale-95 transition-transform"
-            aria-label="Ayuda para padres"
-          >
-            🤝
-          </button>
-          <div className="bg-accent/20 rounded-2xl px-3 py-1.5 flex items-center gap-1">
-            <span className="text-base">🔥</span>
-            <span className="text-sm font-black text-foreground">{streak}</span>
+        <div className="bg-accent/20 rounded-2xl px-3 py-1.5 flex items-center gap-1">
+          <span className="text-base">🔥</span>
+          <span className="text-sm font-black text-foreground">{streak}</span>
           </div>
         </div>
-      </div>
 
       {/* Lessons map */}
       <div className="flex-1 overflow-y-auto">
@@ -83,7 +74,7 @@ const MainMenu = ({ onNavigate, points, medals, childName, onLogout }: MainMenuP
         </button>
       </div>
 
-      <HelpParents open={helpOpen} onOpenChange={setHelpOpen} />
+      
     </div>
   );
 };
