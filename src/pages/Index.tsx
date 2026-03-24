@@ -80,7 +80,7 @@ const Index = () => {
     case "parents":
       return <ParentModule onBack={goMenu} onLogout={handleLogout} />;
     case "profile":
-      return <UserProfile onBack={handleBackToMenu} />;
+      return <UserProfile onBack={handleBackToMenu} onLogout={handleLogout} />;
     default:
       return <MainMenu onNavigate={setScreen} points={points} medals={earnedMedals} childName={childName} onLogout={handleLogout} />;
   }

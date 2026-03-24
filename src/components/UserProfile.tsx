@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 
 interface UserProfileProps {
   onBack: () => void;
+  onLogout: () => void;
 }
 
 interface UserData {
@@ -10,43 +11,72 @@ interface UserData {
   childName: string;
   childAge: string;
   pin: string;
+  avatar?: string;
 }
 
-const UserProfile = ({ onBack }: UserProfileProps) => {
+const AVATARS = ["🧒", "👦", "👧", "🧒🏽", "👦🏽", "👧🏽", "🧒🏻", "👦🏻", "👧🏻", "🐶", "🐱", "🦊", "🐰", "🐻", "🐼"];
+
+const UserProfile = ({ onBack, onLogout }: UserProfileProps) => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [editing, setEditing] = useState(false);
+  const [pickingAvatar, setPickingAvatar] = useState(false);
   const [parentName, setParentName] = useState("");
   const [childName, setChildName] = useState("");
   const [childAge, setChildAge] = useState("3");
+  const [phone, setPhone] = useState("");
+  const [avatar, setAvatar] = useState("🧒");
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const phone = localStorage.getItem("hablatito_current");
-    if (phone) {
-      const stored = localStorage.getItem(`hablatito_user_${phone}`);
+    const currentPhone = localStorage.getItem("hablatito_current");
+    if (currentPhone) {
+      const stored = localStorage.getItem(`hablatito_user_${currentPhone}`);
       if (stored) {
         const data: UserData = JSON.parse(stored);
         setUserData(data);
         setParentName(data.parentName);
         setChildName(data.childName);
         setChildAge(data.childAge);
+        setPhone(data.phone);
+        setAvatar(data.avatar || "🧒");
       }
     }
   }, []);
 
   const handleSave = () => {
     if (!userData) return;
+    const oldPhone = userData.phone;
     const updated: UserData = {
       ...userData,
       parentName,
       childName,
       childAge,
+      phone,
+      avatar,
     };
-    localStorage.setItem(`hablatito_user_${userData.phone}`, JSON.stringify(updated));
+
+    // If phone changed, update the key
+    if (phone !== oldPhone) {
+      localStorage.removeItem(`hablatito_user_${oldPhone}`);
+      localStorage.setItem("hablatito_current", phone);
+    }
+
+    localStorage.setItem(`hablatito_user_${phone}`, JSON.stringify(updated));
     setUserData(updated);
     setEditing(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleAvatarSelect = (emoji: string) => {
+    setAvatar(emoji);
+    setPickingAvatar(false);
+    // Save immediately if not in edit mode
+    if (!editing && userData) {
+      const updated = { ...userData, avatar: emoji };
+      localStorage.setItem(`hablatito_user_${userData.phone}`, JSON.stringify(updated));
+      setUserData(updated);
+    }
   };
 
   if (!userData) return null;
@@ -61,12 +91,40 @@ const UserProfile = ({ onBack }: UserProfileProps) => {
 
       {/* Avatar */}
       <div className="flex flex-col items-center mb-6">
-        <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center text-4xl mb-2">
-          🧒
-        </div>
-        <p className="text-xl font-black text-foreground">{userData.childName}</p>
+        <button
+          onClick={() => setPickingAvatar(!pickingAvatar)}
+          className="w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center text-5xl mb-1 active:scale-95 transition-transform relative"
+        >
+          {avatar}
+          <span className="absolute -bottom-1 -right-1 bg-primary text-primary-foreground w-7 h-7 rounded-full flex items-center justify-center text-sm">
+            ✏️
+          </span>
+        </button>
+        <p className="text-xl font-black text-foreground mt-2">{userData.childName}</p>
         <p className="text-sm text-muted-foreground font-semibold">{userData.childAge} años</p>
       </div>
+
+      {/* Avatar picker */}
+      {pickingAvatar && (
+        <div className="bg-card rounded-2xl p-4 shadow-sm mb-4 animate-bounce-in">
+          <p className="text-sm font-bold text-muted-foreground mb-3 text-center">Elige un avatar</p>
+          <div className="grid grid-cols-5 gap-2 justify-items-center">
+            {AVATARS.map((a) => (
+              <button
+                key={a}
+                onClick={() => handleAvatarSelect(a)}
+                className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl transition-all ${
+                  avatar === a
+                    ? "bg-primary/30 scale-110 ring-2 ring-primary"
+                    : "bg-muted/50 active:scale-95"
+                }`}
+              >
+                {a}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {saved && (
         <div className="bg-secondary/20 rounded-2xl p-3 text-center mb-4 animate-bounce-in">
@@ -97,6 +155,12 @@ const UserProfile = ({ onBack }: UserProfileProps) => {
             className="btn-child bg-primary text-primary-foreground mt-4"
           >
             ✏️ Editar datos
+          </button>
+          <button
+            onClick={onLogout}
+            className="btn-child bg-destructive text-destructive-foreground mt-2"
+          >
+            🚪 Cerrar sesión
           </button>
         </div>
       ) : (
@@ -136,6 +200,16 @@ const UserProfile = ({ onBack }: UserProfileProps) => {
                 </button>
               ))}
             </div>
+          </div>
+          <div>
+            <label className="text-sm font-bold text-foreground block mb-1">📱 Celular</label>
+            <input
+              type="tel"
+              inputMode="numeric"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 9))}
+              className="w-full rounded-2xl border-2 border-border bg-card px-4 py-3 text-base font-semibold focus:outline-none focus:border-primary"
+            />
           </div>
           <div className="flex gap-3 mt-4">
             <button
