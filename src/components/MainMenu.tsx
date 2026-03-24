@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import titoMascot from "@/assets/tito-mascot.png";
 import LessonsMap from "@/components/LessonsMap";
-import HelpParents from "@/components/HelpParents";
+
 import { getStreak, updateStreak } from "@/lib/streak";
 
 interface MainMenuProps {
