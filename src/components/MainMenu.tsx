@@ -74,7 +74,7 @@ const MainMenu = ({ onNavigate, points, medals, childName, onLogout }: MainMenuP
         </button>
       </div>
 
-      <HelpParents open={helpOpen} onOpenChange={setHelpOpen} />
+      
     </div>
   );
 };
