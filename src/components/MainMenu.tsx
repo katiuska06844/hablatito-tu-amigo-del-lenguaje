@@ -14,7 +14,7 @@ interface MainMenuProps {
 
 const MainMenu = ({ onNavigate, points, medals, childName, onLogout }: MainMenuProps) => {
   const [streak, setStreak] = useState(0);
-  const [helpOpen, setHelpOpen] = useState(false);
+  
 
   useEffect(() => {
     const s = updateStreak();
