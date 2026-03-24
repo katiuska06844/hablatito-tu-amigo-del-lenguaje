@@ -36,7 +36,6 @@ const MainMenu = ({ onNavigate, points, medals, childName, onLogout }: MainMenuP
           <span className="text-sm font-black text-foreground">{streak}</span>
           </div>
         </div>
-      </div>
 
       {/* Lessons map */}
       <div className="flex-1 overflow-y-auto">
