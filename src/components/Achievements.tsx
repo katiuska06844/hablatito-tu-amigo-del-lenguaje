@@ -1,11 +1,14 @@
 import { getLevel, getLevelLabel } from "@/lib/adaptive";
 import { getStreak } from "@/lib/streak";
+import VirtualPet from "@/components/VirtualPet";
+import Certificate from "@/components/Certificate";
 
 interface AchievementsProps {
   onBack: () => void;
   points: number;
   medals: number;
   gamesPlayed: number;
+  childName: string;
 }
 
 const allMedals = [
@@ -17,17 +20,18 @@ const allMedals = [
   { name: "Maestro", icon: "👑", requirement: 500 },
 ];
 
-const Achievements = ({ onBack, points, medals, gamesPlayed }: AchievementsProps) => {
+const Achievements = ({ onBack, points, medals, gamesPlayed, childName }: AchievementsProps) => {
   const streak = getStreak();
   const level = Math.floor(points / 50) + 1;
   const progressToNext = (points % 50) / 50;
+  const completedLessons = gamesPlayed;
 
   const wordsLevel = getLevel("words");
   const repeatLevel = getLevel("repeat");
   const gamesLevel = getLevel("games");
 
   return (
-    <div className="app-shell flex flex-col min-h-dvh bg-background px-5 py-6 pb-4">
+    <div className="app-shell flex flex-col min-h-dvh bg-background px-5 py-6 pb-4 overflow-y-auto">
       <div className="flex items-center justify-between mb-5">
         <button onClick={onBack} className="text-2xl p-2">←</button>
         <h2 className="text-xl font-black text-foreground">Mis Logros 🏆</h2>
@@ -65,6 +69,16 @@ const Achievements = ({ onBack, points, medals, gamesPlayed }: AchievementsProps
         </div>
       </div>
 
+      {/* Virtual Pet */}
+      <div className="mb-4">
+        <VirtualPet completedLessons={completedLessons} />
+      </div>
+
+      {/* Certificate */}
+      <div className="mb-4">
+        <Certificate childName={childName} levelsCompleted={level} onClose={() => {}} />
+      </div>
+
       {/* Adaptive levels */}
       <h3 className="text-sm font-black text-foreground mb-2">Dificultad</h3>
       <div className="flex gap-2 mb-4">
@@ -82,7 +96,7 @@ const Achievements = ({ onBack, points, medals, gamesPlayed }: AchievementsProps
 
       {/* Medals */}
       <h3 className="text-sm font-black text-foreground mb-2">Medallas ({medals})</h3>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-2 pb-4">
         {allMedals.map((medal, idx) => {
           const unlocked = points >= medal.requirement;
           return (
