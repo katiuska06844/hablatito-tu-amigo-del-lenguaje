@@ -35,7 +35,7 @@ const wordsByLevel: Record<DifficultyLevel, WordSet[]> = {
 
 const WordGame = ({ onBack, onPoints }: WordGameProps) => {
   const [level, setLevel] = useState<DifficultyLevel>(() => getLevel("words"));
-  const words = wordsByLevel[level];
+  const [words] = useState(() => wordsByLevel[getLevel("words")]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);

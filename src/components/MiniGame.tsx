@@ -33,7 +33,7 @@ const animalsByLevel: Record<DifficultyLevel, Animal[]> = {
 
 const MiniGame = ({ onBack, onPoints }: MiniGameProps) => {
   const [level, setLevel] = useState<DifficultyLevel>(() => getLevel("games"));
-  const animals = animalsByLevel[level];
+  const [animals] = useState(() => animalsByLevel[getLevel("games")]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showSound, setShowSound] = useState(false);
   const [completed, setCompleted] = useState(false);
