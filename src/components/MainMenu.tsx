@@ -31,17 +31,9 @@ const MainMenu = ({ onNavigate, points, medals, childName, onLogout }: MainMenuP
             <p className="text-base font-black text-foreground">¡Hola, {childName}!</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setHelpOpen(true)}
-            className="bg-secondary/20 rounded-2xl px-2.5 py-1.5 text-sm font-bold text-foreground active:scale-95 transition-transform"
-            aria-label="Ayuda para padres"
-          >
-            🤝
-          </button>
-          <div className="bg-accent/20 rounded-2xl px-3 py-1.5 flex items-center gap-1">
-            <span className="text-base">🔥</span>
-            <span className="text-sm font-black text-foreground">{streak}</span>
+        <div className="bg-accent/20 rounded-2xl px-3 py-1.5 flex items-center gap-1">
+          <span className="text-base">🔥</span>
+          <span className="text-sm font-black text-foreground">{streak}</span>
           </div>
         </div>
       </div>
