@@ -6,43 +6,45 @@
 
 @layer base {
   :root {
-    --background: 38 50% 96%;
-    --foreground: 25 30% 20%;
+    --background: 120 25% 95%;
+    --foreground: 25 30% 18%;
 
-    --card: 38 40% 98%;
-    --card-foreground: 25 30% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 25 30% 18%;
 
-    --popover: 38 40% 98%;
-    --popover-foreground: 25 30% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 25 30% 18%;
 
-    --primary: 24 80% 55%;
+    --primary: 145 45% 42%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 145 35% 55%;
+    --secondary: 200 65% 55%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 35 30% 90%;
-    --muted-foreground: 25 15% 50%;
+    --muted: 120 15% 88%;
+    --muted-foreground: 25 15% 45%;
 
-    --accent: 45 90% 65%;
-    --accent-foreground: 25 30% 20%;
+    --accent: 45 85% 62%;
+    --accent-foreground: 25 30% 18%;
 
     --destructive: 0 65% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 35 25% 85%;
-    --input: 35 25% 85%;
-    --ring: 24 80% 55%;
+    --border: 120 15% 82%;
+    --input: 120 15% 82%;
+    --ring: 145 45% 42%;
 
     --radius: 1.25rem;
 
-    --sky: 200 60% 72%;
+    --sky: 200 65% 55%;
     --sky-foreground: 0 0% 100%;
-    --earth: 15 45% 45%;
+    --earth: 25 40% 38%;
     --earth-foreground: 0 0% 100%;
     --reward-gold: 45 100% 50%;
     --reward-silver: 0 0% 75%;
     --reward-bronze: 25 60% 50%;
+    --andean-warm: 15 50% 55%;
+    --andean-warm-foreground: 0 0% 100%;
 
     font-family: 'Nunito', sans-serif;
   }
@@ -64,6 +66,16 @@
   min-height: 100dvh;
   position: relative;
   overflow-x: hidden;
+}
+
+/* Andean background */
+.andean-bg {
+  background: linear-gradient(
+    180deg,
+    hsl(200 65% 85%) 0%,
+    hsl(120 25% 92%) 40%,
+    hsl(45 40% 90%) 100%
+  );
 }
 
 /* Large child-friendly button */
@@ -106,4 +118,14 @@
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+}
+
+/* Pulse glow for unlocked items */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px hsl(145 45% 42% / 0.3); }
+  50% { box-shadow: 0 0 20px hsl(145 45% 42% / 0.5); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
 }
