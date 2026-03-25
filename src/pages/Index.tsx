@@ -8,6 +8,14 @@ import MiniGame from "@/components/MiniGame";
 import Achievements from "@/components/Achievements";
 import ParentModule from "@/components/ParentModule";
 import UserProfile from "@/components/UserProfile";
+import AnimalsActivity from "@/components/AnimalsActivity";
+import FruitsActivity from "@/components/FruitsActivity";
+import ColorsActivity from "@/components/ColorsActivity";
+import EmotionsActivity from "@/components/EmotionsActivity";
+import BodyPartsActivity from "@/components/BodyPartsActivity";
+import RuralActivity from "@/components/RuralActivity";
+import StoriesActivity from "@/components/StoriesActivity";
+import PhrasesActivity from "@/components/PhrasesActivity";
 
 const Index = () => {
   const [screen, setScreen] = useState("auth");
@@ -22,10 +30,25 @@ const Index = () => {
       if (stored) {
         const data = JSON.parse(stored);
         setChildName(data.childName);
+        // Load saved progress
+        const progress = localStorage.getItem(`hablatito_progress_${currentPhone}`);
+        if (progress) {
+          const p = JSON.parse(progress);
+          setPoints(p.points || 0);
+          setGamesPlayed(p.gamesPlayed || 0);
+        }
         setScreen("onboarding");
       }
     }
   }, []);
+
+  // Save progress whenever points change
+  useEffect(() => {
+    const currentPhone = localStorage.getItem("hablatito_current");
+    if (currentPhone && points > 0) {
+      localStorage.setItem(`hablatito_progress_${currentPhone}`, JSON.stringify({ points, gamesPlayed }));
+    }
+  }, [points, gamesPlayed]);
 
   const earnedMedals = [10, 30, 50, 100, 200, 500].filter((r) => points >= r).length;
 
@@ -49,7 +72,6 @@ const Index = () => {
     setGamesPlayed(0);
   };
 
-  // Refresh child name when returning to menu (in case profile was edited)
   const handleBackToMenu = () => {
     const currentPhone = localStorage.getItem("hablatito_current");
     if (currentPhone) {
@@ -75,6 +97,22 @@ const Index = () => {
       return <RepeatActivity onBack={goMenu} onPoints={addPoints} />;
     case "games":
       return <MiniGame onBack={goMenu} onPoints={addPoints} />;
+    case "animals":
+      return <AnimalsActivity onBack={goMenu} onPoints={addPoints} />;
+    case "fruits":
+      return <FruitsActivity onBack={goMenu} onPoints={addPoints} />;
+    case "colors":
+      return <ColorsActivity onBack={goMenu} onPoints={addPoints} />;
+    case "emotions":
+      return <EmotionsActivity onBack={goMenu} onPoints={addPoints} />;
+    case "bodyparts":
+      return <BodyPartsActivity onBack={goMenu} onPoints={addPoints} />;
+    case "rural":
+      return <RuralActivity onBack={goMenu} onPoints={addPoints} />;
+    case "stories":
+      return <StoriesActivity onBack={goMenu} onPoints={addPoints} />;
+    case "phrases":
+      return <PhrasesActivity onBack={goMenu} onPoints={addPoints} />;
     case "achievements":
       return <Achievements onBack={goMenu} points={points} medals={earnedMedals} gamesPlayed={gamesPlayed} childName={childName} />;
     case "parents":
