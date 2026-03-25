@@ -60,6 +60,10 @@ export default {
           silver: "hsl(var(--reward-silver))",
           bronze: "hsl(var(--reward-bronze))",
         },
+        "andean-warm": {
+          DEFAULT: "hsl(var(--andean-warm))",
+          foreground: "hsl(var(--andean-warm-foreground))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -68,20 +72,12 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
       },
       animation: {

@@ -1,7 +1,7 @@
 // Adaptive difficulty engine — persists in localStorage
 // Tracks accuracy per activity and adjusts level (1-3)
 
-export type ActivityType = "words" | "repeat" | "games";
+export type ActivityType = "words" | "repeat" | "games" | "animals" | "fruits" | "colors" | "emotions" | "bodyparts" | "rural" | "stories" | "phrases";
 export type DifficultyLevel = 1 | 2 | 3;
 
 interface PerformanceData {
@@ -15,15 +15,15 @@ const STORAGE_KEY = "hablatito_performance";
 
 const defaultPerf = (): PerformanceData => ({ correct: 0, total: 0, level: 1, streak: 0 });
 
-const load = (): Record<ActivityType, PerformanceData> => {
+const load = (): Record<string, PerformanceData> => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return JSON.parse(raw);
   } catch {}
-  return { words: defaultPerf(), repeat: defaultPerf(), games: defaultPerf() };
+  return {};
 };
 
-const save = (data: Record<ActivityType, PerformanceData>) => {
+const save = (data: Record<string, PerformanceData>) => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 };
 
