@@ -1,32 +1,31 @@
-import { useState, useEffect } from "react";
-import { speakWord, speakCelebration } from "@/lib/speech";
-import { recordResult, getLevel, getLevelLabel, type DifficultyLevel } from "@/lib/adaptive";
+import { useState, useEffect, useCallback } from "react";
+import { speakWord } from "@/lib/speech";
+import { getLevel, recordResult, getLevelLabel, type DifficultyLevel } from "@/lib/adaptive";
+import VoiceButton from "@/components/VoiceButton";
 
-interface Props {
-  onBack: () => void;
-  onPoints: (pts: number) => void;
-}
-
-type Emotion = { name: string; emoji: string; options: string[]; correct: number };
+interface Props { onBack: () => void; onPoints: (pts: number) => void; }
+type Emotion = { name: string; emoji: string; desc: string };
 
 const emotionsByLevel: Record<DifficultyLevel, Emotion[]> = {
   1: [
-    { name: "Feliz", emoji: "😊", options: ["😊", "😢"], correct: 0 },
-    { name: "Triste", emoji: "😢", options: ["😢", "😊"], correct: 0 },
-    { name: "Enojado", emoji: "😠", options: ["😠", "😊"], correct: 0 },
+    { name: "Feliz", emoji: "😊", desc: "Cuando estamos contentos" },
+    { name: "Triste", emoji: "😢", desc: "Cuando algo nos duele" },
+    { name: "Enojado", emoji: "😠", desc: "Cuando no nos gusta algo" },
   ],
   2: [
-    { name: "Feliz", emoji: "😊", options: ["😊", "😢", "😠", "😮"], correct: 0 },
-    { name: "Sorprendido", emoji: "😮", options: ["😊", "😮", "😢", "😠"], correct: 1 },
-    { name: "Triste", emoji: "😢", options: ["😠", "😊", "😢", "😮"], correct: 2 },
-    { name: "Enojado", emoji: "😠", options: ["😢", "😠", "😊", "😮"], correct: 1 },
+    { name: "Feliz", emoji: "😊", desc: "Cuando estamos contentos" },
+    { name: "Triste", emoji: "😢", desc: "Cuando algo nos duele" },
+    { name: "Enojado", emoji: "😠", desc: "Cuando no nos gusta algo" },
+    { name: "Sorprendido", emoji: "😲", desc: "Cuando algo nos asombra" },
+    { name: "Asustado", emoji: "😨", desc: "Cuando tenemos miedo" },
   ],
   3: [
-    { name: "Asustado", emoji: "😨", options: ["😨", "😮", "😢", "😊"], correct: 0 },
-    { name: "Dormido", emoji: "😴", options: ["😠", "😴", "😊", "😮"], correct: 1 },
-    { name: "Enamorado", emoji: "🥰", options: ["😊", "😠", "🥰", "😴"], correct: 2 },
-    { name: "Pensando", emoji: "🤔", options: ["🤔", "😮", "😢", "😴"], correct: 0 },
-    { name: "Enfermo", emoji: "🤒", options: ["😴", "🤒", "😠", "😊"], correct: 1 },
+    { name: "Feliz", emoji: "😊", desc: "Cuando estamos contentos" },
+    { name: "Triste", emoji: "😢", desc: "Cuando algo nos duele" },
+    { name: "Enojado", emoji: "😠", desc: "Cuando no nos gusta algo" },
+    { name: "Sorprendido", emoji: "😲", desc: "Cuando algo nos asombra" },
+    { name: "Asustado", emoji: "😨", desc: "Cuando tenemos miedo" },
+    { name: "Cansado", emoji: "😴", desc: "Cuando necesitamos dormir" },
   ],
 };
 
@@ -34,35 +33,31 @@ const EmotionsActivity = ({ onBack, onPoints }: Props) => {
   const [level, setLevel] = useState<DifficultyLevel>(() => getLevel("emotions"));
   const [items] = useState(() => emotionsByLevel[getLevel("emotions")]);
   const [idx, setIdx] = useState(0);
-  const [selected, setSelected] = useState<number | null>(null);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [score, setScore] = useState(0);
   const [done, setDone] = useState(false);
-
+  const [score, setScore] = useState(0);
+  const [tapped, setTapped] = useState(false);
   const current = items[idx];
-  useEffect(() => { speakWord(current.name); }, [idx]);
 
-  const handleSelect = (i: number) => {
-    if (selected !== null) return;
-    setSelected(i);
-    const correct = i === current.correct;
-    setIsCorrect(correct);
-    const nl = recordResult("emotions", correct);
-    setLevel(nl);
-    if (correct) { setScore(s => s + 10); speakCelebration("¡Correcto!"); }
-    else speakCelebration("Intenta de nuevo");
+  useEffect(() => { speakWord(current.name); setTapped(false); }, [idx]);
+  const handleTap = () => { speakWord(current.name); setTapped(true); };
+
+  const handleVoiceMatch = useCallback(() => {
+    setScore(s => s + 5);
+    recordResult("emotions", true);
+    setLevel(getLevel("emotions"));
     setTimeout(() => {
-      if (idx < items.length - 1) { setIdx(j => j + 1); setSelected(null); setIsCorrect(null); }
-      else { onPoints(correct ? score + 10 : score); setDone(true); }
-    }, 1200);
-  };
+      if (idx < items.length - 1) setIdx(i => i + 1);
+      else { onPoints(score + 5); setDone(true); }
+    }, 600);
+  }, [idx, items.length, score, onPoints]);
 
   if (done) return (
     <div className="app-shell andean-bg flex flex-col items-center justify-center min-h-dvh px-6 gap-6">
       <div className="animate-bounce-in text-center">
         <span className="text-8xl block mb-4">😊</span>
-        <h2 className="text-3xl font-black text-foreground">¡Excelente!</h2>
-        <p className="text-xl text-muted-foreground font-bold mt-2">Ganaste {score} puntos</p>
+        <h2 className="text-3xl font-black text-foreground">¡Increíble!</h2>
+        <p className="text-xl text-muted-foreground font-bold mt-2">Aprendiste {items.length} emociones</p>
+        <p className="text-lg text-primary font-bold mt-1">+{score} puntos</p>
       </div>
       <button onClick={onBack} className="btn-child bg-primary text-primary-foreground">Volver</button>
     </div>
@@ -79,32 +74,17 @@ const EmotionsActivity = ({ onBack, onPoints }: Props) => {
         <span className="bg-primary/15 text-primary rounded-full px-4 py-1 text-sm font-bold">{getLevelLabel(level)}</span>
       </div>
       <div className="w-full bg-muted rounded-full h-3 mb-6">
-        <div className="bg-secondary h-3 rounded-full transition-all duration-500" style={{ width: `${((idx + 1) / items.length) * 100}%` }} />
+        <div className="bg-primary h-3 rounded-full transition-all duration-500" style={{ width: `${((idx + 1) / items.length) * 100}%` }} />
       </div>
-      <div className="flex flex-col items-center gap-2 mb-6 animate-bounce-in" key={idx}>
-        <span className="text-[100px]">{current.emoji}</span>
+      <div className="flex-1 flex flex-col items-center justify-center gap-4" key={idx}>
+        {!tapped && <p className="text-muted-foreground font-semibold">¡Toca la carita!</p>}
+        <button onClick={handleTap} className="animate-bounce-in active:scale-90 transition-transform">
+          <span className="text-[100px] block">{current.emoji}</span>
+        </button>
         <h1 className="text-4xl font-black text-foreground">{current.name}</h1>
-        <p className="text-muted-foreground font-semibold">¿Cuál carita es "{current.name.toLowerCase()}"?</p>
+        <p className="text-sm text-muted-foreground font-semibold bg-card/80 rounded-2xl px-4 py-2">{current.desc}</p>
+        {tapped && <VoiceButton targetWord={current.name} onMatch={handleVoiceMatch} />}
       </div>
-      <div className="grid grid-cols-2 gap-4 flex-1">
-        {current.options.map((opt, i) => {
-          let cls = "bg-card border-2 border-border";
-          if (selected !== null) {
-            if (i === current.correct) cls = "bg-primary/20 border-2 border-primary";
-            else if (i === selected && !isCorrect) cls = "bg-destructive/10 border-2 border-destructive";
-          }
-          return (
-            <button key={i} onClick={() => handleSelect(i)} className={`game-card ${cls} flex items-center justify-center min-h-[100px]`}>
-              <span className="text-7xl">{opt}</span>
-            </button>
-          );
-        })}
-      </div>
-      {selected !== null && (
-        <div className="mt-4 text-center animate-bounce-in">
-          <span className="text-2xl font-black">{isCorrect ? "✅ ¡Correcto!" : "❌ Intenta de nuevo"}</span>
-        </div>
-      )}
     </div>
   );
 };

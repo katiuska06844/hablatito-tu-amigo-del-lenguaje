@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
-import { speakWord, speakSound, speakCelebration } from "@/lib/speech";
+import { useState, useEffect, useCallback } from "react";
+import { speakWord, speakSound } from "@/lib/speech";
 import { getLevel, recordResult, getLevelLabel, type DifficultyLevel } from "@/lib/adaptive";
+import VoiceButton from "@/components/VoiceButton";
 
 interface Props {
   onBack: () => void;
@@ -39,23 +40,38 @@ const AnimalsActivity = ({ onBack, onPoints }: Props) => {
   const [showSound, setShowSound] = useState(false);
   const [done, setDone] = useState(false);
   const [score, setScore] = useState(0);
+  const [phase, setPhase] = useState<"listen" | "speak">("listen");
 
   const current = animals[idx];
 
-  useEffect(() => { speakWord(current.name); }, [idx]);
+  useEffect(() => {
+    speakWord(current.name);
+    setPhase("listen");
+  }, [idx]);
 
   const handleTap = () => {
     speakSound(current.sound);
     setShowSound(true);
+    setTimeout(() => {
+      setShowSound(false);
+      setPhase("speak");
+    }, 1200);
+  };
+
+  const handleVoiceMatch = useCallback(() => {
     setScore(s => s + 5);
     const nl = recordResult("animals", true);
     setLevel(nl);
     setTimeout(() => {
-      setShowSound(false);
-      if (idx < animals.length - 1) setIdx(i => i + 1);
-      else { onPoints(score + 5); setDone(true); }
-    }, 1500);
-  };
+      if (idx < animals.length - 1) {
+        setIdx(i => i + 1);
+        setPhase("listen");
+      } else {
+        onPoints(score + 5);
+        setDone(true);
+      }
+    }, 600);
+  }, [idx, animals.length, score, onPoints]);
 
   if (done) return (
     <div className="app-shell andean-bg flex flex-col items-center justify-center min-h-dvh px-6 gap-6">
@@ -80,13 +96,13 @@ const AnimalsActivity = ({ onBack, onPoints }: Props) => {
       <div className="flex justify-center mb-3">
         <span className="bg-primary/15 text-primary rounded-full px-4 py-1 text-sm font-bold">{getLevelLabel(level)}</span>
       </div>
-      <div className="w-full bg-muted rounded-full h-3 mb-8">
+      <div className="w-full bg-muted rounded-full h-3 mb-6">
         <div className="bg-primary h-3 rounded-full transition-all duration-500" style={{ width: `${((idx + 1) / animals.length) * 100}%` }} />
       </div>
       <div className="flex-1 flex flex-col items-center justify-center gap-4" key={idx}>
-        <p className="text-muted-foreground font-semibold">¡Toca el animal!</p>
-        <button onClick={handleTap} className="animate-bounce-in active:scale-90 transition-transform">
-          <span className="text-[120px] block">{current.emoji}</span>
+        {phase === "listen" && <p className="text-muted-foreground font-semibold">¡Toca el animal!</p>}
+        <button onClick={handleTap} className="animate-bounce-in active:scale-90 transition-transform" disabled={phase === "speak"}>
+          <span className="text-[100px] block">{current.emoji}</span>
         </button>
         <h1 className="text-4xl font-black text-foreground">{current.name}</h1>
         <p className="text-sm text-muted-foreground font-semibold bg-card/80 rounded-2xl px-4 py-2">{current.fact}</p>
@@ -94,6 +110,9 @@ const AnimalsActivity = ({ onBack, onPoints }: Props) => {
           <div className="animate-bounce-in bg-primary/20 rounded-3xl px-8 py-4">
             <p className="text-3xl font-black text-primary">"{current.sound}"</p>
           </div>
+        )}
+        {phase === "speak" && !showSound && (
+          <VoiceButton targetWord={current.name} onMatch={handleVoiceMatch} />
         )}
       </div>
     </div>

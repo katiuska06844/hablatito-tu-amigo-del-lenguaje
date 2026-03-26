@@ -16,6 +16,7 @@ import BodyPartsActivity from "@/components/BodyPartsActivity";
 import RuralActivity from "@/components/RuralActivity";
 import StoriesActivity from "@/components/StoriesActivity";
 import PhrasesActivity from "@/components/PhrasesActivity";
+import Shop from "@/components/Shop";
 
 const Index = () => {
   const [screen, setScreen] = useState("auth");
@@ -30,7 +31,6 @@ const Index = () => {
       if (stored) {
         const data = JSON.parse(stored);
         setChildName(data.childName);
-        // Load saved progress
         const progress = localStorage.getItem(`hablatito_progress_${currentPhone}`);
         if (progress) {
           const p = JSON.parse(progress);
@@ -42,7 +42,6 @@ const Index = () => {
     }
   }, []);
 
-  // Save progress whenever points change
   useEffect(() => {
     const currentPhone = localStorage.getItem("hablatito_current");
     if (currentPhone && points > 0) {
@@ -55,6 +54,10 @@ const Index = () => {
   const addPoints = (pts: number) => {
     setPoints((p) => p + pts);
     setGamesPlayed((g) => g + 1);
+  };
+
+  const spendPoints = (amount: number) => {
+    setPoints((p) => Math.max(0, p - amount));
   };
 
   const goMenu = () => setScreen("menu");
@@ -119,6 +122,8 @@ const Index = () => {
       return <ParentModule onBack={goMenu} onLogout={handleLogout} />;
     case "profile":
       return <UserProfile onBack={handleBackToMenu} onLogout={handleLogout} />;
+    case "shop":
+      return <Shop onBack={goMenu} points={points} onSpendPoints={spendPoints} />;
     default:
       return <MainMenu onNavigate={setScreen} points={points} medals={earnedMedals} childName={childName} onLogout={handleLogout} />;
   }

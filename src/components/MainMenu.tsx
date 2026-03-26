@@ -22,7 +22,7 @@ const MainMenu = ({ onNavigate, points, medals, childName, onLogout }: MainMenuP
 
   return (
     <div
-      className="app-shell flex flex-col min-h-dvh px-5 py-6"
+      className="app-shell flex flex-col min-h-dvh"
       style={{
         backgroundImage: `linear-gradient(to bottom, hsla(200,65%,85%,0.85), hsla(120,25%,92%,0.9)), url(${andeanBg})`,
         backgroundSize: "cover",
@@ -30,12 +30,12 @@ const MainMenu = ({ onNavigate, points, medals, childName, onLogout }: MainMenuP
       }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex items-center justify-between px-5 pt-6 pb-3">
         <div className="flex items-center gap-3">
           <img src={titoMascot} alt="Tito" className="w-12 h-12 animate-float rounded-full" width={48} height={48} />
           <div>
             <p className="text-base font-black text-foreground">¡Hola, {childName}!</p>
-            <p className="text-xs text-muted-foreground font-bold">⭐ {points} puntos</p>
+            <p className="text-xs text-muted-foreground font-bold">⭐ {points} pts</p>
           </div>
         </div>
         <div className="bg-card/80 backdrop-blur-sm rounded-2xl px-3 py-1.5 flex items-center gap-1 shadow-sm">
@@ -44,13 +44,18 @@ const MainMenu = ({ onNavigate, points, medals, childName, onLogout }: MainMenuP
         </div>
       </div>
 
+      {/* Title */}
+      <div className="text-center px-5 mb-2">
+        <p className="text-sm font-black text-foreground/70 tracking-wide uppercase">Tu camino de aprendizaje 🗺️</p>
+      </div>
+
       {/* Lessons map */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto px-5 pb-2">
         <LessonsMap onNavigate={onNavigate} points={points} />
       </div>
 
       {/* Bottom nav */}
-      <div className="flex justify-around mt-4 pt-3 border-t border-border/50 bg-card/60 backdrop-blur-sm rounded-2xl py-2">
+      <div className="flex justify-around border-t border-border/50 bg-card/80 backdrop-blur-sm py-2.5 px-2">
         <button onClick={() => onNavigate("menu")} className="flex flex-col items-center gap-0.5 text-primary">
           <span className="text-xl">🏠</span>
           <span className="text-[10px] font-bold">Inicio</span>
@@ -58,6 +63,10 @@ const MainMenu = ({ onNavigate, points, medals, childName, onLogout }: MainMenuP
         <button onClick={() => onNavigate("achievements")} className="flex flex-col items-center gap-0.5 text-muted-foreground">
           <span className="text-xl">🏆</span>
           <span className="text-[10px] font-bold">Logros</span>
+        </button>
+        <button onClick={() => onNavigate("shop")} className="flex flex-col items-center gap-0.5 text-muted-foreground">
+          <span className="text-xl">🛍️</span>
+          <span className="text-[10px] font-bold">Tienda</span>
         </button>
         <button onClick={() => onNavigate("profile")} className="flex flex-col items-center gap-0.5 text-muted-foreground">
           <span className="text-xl">🧒</span>

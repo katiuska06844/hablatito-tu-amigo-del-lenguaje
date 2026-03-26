@@ -1,32 +1,32 @@
-import { useState, useEffect } from "react";
-import { speakWord, speakCelebration } from "@/lib/speech";
-import { recordResult, getLevel, getLevelLabel, type DifficultyLevel } from "@/lib/adaptive";
+import { useState, useEffect, useCallback } from "react";
+import { speakWord } from "@/lib/speech";
+import { getLevel, recordResult, getLevelLabel, type DifficultyLevel } from "@/lib/adaptive";
+import VoiceButton from "@/components/VoiceButton";
 
-interface Props {
-  onBack: () => void;
-  onPoints: (pts: number) => void;
-}
+interface Props { onBack: () => void; onPoints: (pts: number) => void; }
 
-type ColorItem = { name: string; hex: string; options: { name: string; hex: string }[]; correct: number };
+type ColorItem = { name: string; color: string; emoji: string };
 
 const colorsByLevel: Record<DifficultyLevel, ColorItem[]> = {
   1: [
-    { name: "Rojo", hex: "#EF4444", options: [{ name: "Rojo", hex: "#EF4444" }, { name: "Azul", hex: "#3B82F6" }], correct: 0 },
-    { name: "Azul", hex: "#3B82F6", options: [{ name: "Azul", hex: "#3B82F6" }, { name: "Amarillo", hex: "#EAB308" }], correct: 0 },
-    { name: "Verde", hex: "#22C55E", options: [{ name: "Verde", hex: "#22C55E" }, { name: "Rojo", hex: "#EF4444" }], correct: 0 },
+    { name: "Rojo", color: "bg-red-500", emoji: "🔴" },
+    { name: "Azul", color: "bg-blue-500", emoji: "🔵" },
+    { name: "Amarillo", color: "bg-yellow-400", emoji: "🟡" },
   ],
   2: [
-    { name: "Amarillo", hex: "#EAB308", options: [{ name: "Rojo", hex: "#EF4444" }, { name: "Amarillo", hex: "#EAB308" }, { name: "Azul", hex: "#3B82F6" }, { name: "Verde", hex: "#22C55E" }], correct: 1 },
-    { name: "Rojo", hex: "#EF4444", options: [{ name: "Rojo", hex: "#EF4444" }, { name: "Naranja", hex: "#F97316" }, { name: "Morado", hex: "#A855F7" }, { name: "Azul", hex: "#3B82F6" }], correct: 0 },
-    { name: "Verde", hex: "#22C55E", options: [{ name: "Amarillo", hex: "#EAB308" }, { name: "Azul", hex: "#3B82F6" }, { name: "Verde", hex: "#22C55E" }, { name: "Rojo", hex: "#EF4444" }], correct: 2 },
-    { name: "Naranja", hex: "#F97316", options: [{ name: "Naranja", hex: "#F97316" }, { name: "Rojo", hex: "#EF4444" }, { name: "Amarillo", hex: "#EAB308" }, { name: "Morado", hex: "#A855F7" }], correct: 0 },
+    { name: "Rojo", color: "bg-red-500", emoji: "🔴" },
+    { name: "Azul", color: "bg-blue-500", emoji: "🔵" },
+    { name: "Amarillo", color: "bg-yellow-400", emoji: "🟡" },
+    { name: "Verde", color: "bg-green-500", emoji: "🟢" },
+    { name: "Naranja", color: "bg-orange-500", emoji: "🟠" },
   ],
   3: [
-    { name: "Morado", hex: "#A855F7", options: [{ name: "Morado", hex: "#A855F7" }, { name: "Azul", hex: "#3B82F6" }, { name: "Rosa", hex: "#EC4899" }, { name: "Rojo", hex: "#EF4444" }], correct: 0 },
-    { name: "Rosa", hex: "#EC4899", options: [{ name: "Naranja", hex: "#F97316" }, { name: "Rosa", hex: "#EC4899" }, { name: "Morado", hex: "#A855F7" }, { name: "Rojo", hex: "#EF4444" }], correct: 1 },
-    { name: "Celeste", hex: "#38BDF8", options: [{ name: "Azul", hex: "#3B82F6" }, { name: "Verde", hex: "#22C55E" }, { name: "Celeste", hex: "#38BDF8" }, { name: "Morado", hex: "#A855F7" }], correct: 2 },
-    { name: "Marrón", hex: "#92400E", options: [{ name: "Marrón", hex: "#92400E" }, { name: "Naranja", hex: "#F97316" }, { name: "Rojo", hex: "#EF4444" }, { name: "Verde", hex: "#22C55E" }], correct: 0 },
-    { name: "Blanco", hex: "#F8FAFC", options: [{ name: "Amarillo", hex: "#EAB308" }, { name: "Blanco", hex: "#F8FAFC" }, { name: "Celeste", hex: "#38BDF8" }, { name: "Rosa", hex: "#EC4899" }], correct: 1 },
+    { name: "Rojo", color: "bg-red-500", emoji: "🔴" },
+    { name: "Azul", color: "bg-blue-500", emoji: "🔵" },
+    { name: "Amarillo", color: "bg-yellow-400", emoji: "🟡" },
+    { name: "Verde", color: "bg-green-500", emoji: "🟢" },
+    { name: "Morado", color: "bg-purple-500", emoji: "🟣" },
+    { name: "Naranja", color: "bg-orange-500", emoji: "🟠" },
   ],
 };
 
@@ -34,35 +34,32 @@ const ColorsActivity = ({ onBack, onPoints }: Props) => {
   const [level, setLevel] = useState<DifficultyLevel>(() => getLevel("colors"));
   const [items] = useState(() => colorsByLevel[getLevel("colors")]);
   const [idx, setIdx] = useState(0);
-  const [selected, setSelected] = useState<number | null>(null);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [score, setScore] = useState(0);
   const [done, setDone] = useState(false);
-
+  const [score, setScore] = useState(0);
+  const [tapped, setTapped] = useState(false);
   const current = items[idx];
-  useEffect(() => { speakWord(current.name); }, [idx]);
 
-  const handleSelect = (i: number) => {
-    if (selected !== null) return;
-    setSelected(i);
-    const correct = i === current.correct;
-    setIsCorrect(correct);
-    const nl = recordResult("colors", correct);
-    setLevel(nl);
-    if (correct) { setScore(s => s + 10); speakCelebration("¡Correcto!"); }
-    else speakCelebration("Intenta de nuevo");
+  useEffect(() => { speakWord(current.name); setTapped(false); }, [idx]);
+
+  const handleTap = () => { speakWord(current.name); setTapped(true); };
+
+  const handleVoiceMatch = useCallback(() => {
+    setScore(s => s + 5);
+    recordResult("colors", true);
+    setLevel(getLevel("colors"));
     setTimeout(() => {
-      if (idx < items.length - 1) { setIdx(j => j + 1); setSelected(null); setIsCorrect(null); }
-      else { onPoints(correct ? score + 10 : score); setDone(true); }
-    }, 1200);
-  };
+      if (idx < items.length - 1) setIdx(i => i + 1);
+      else { onPoints(score + 5); setDone(true); }
+    }, 600);
+  }, [idx, items.length, score, onPoints]);
 
   if (done) return (
     <div className="app-shell andean-bg flex flex-col items-center justify-center min-h-dvh px-6 gap-6">
       <div className="animate-bounce-in text-center">
         <span className="text-8xl block mb-4">🎨</span>
-        <h2 className="text-3xl font-black text-foreground">¡Muy bien!</h2>
-        <p className="text-xl text-muted-foreground font-bold mt-2">Ganaste {score} puntos</p>
+        <h2 className="text-3xl font-black text-foreground">¡Genial!</h2>
+        <p className="text-xl text-muted-foreground font-bold mt-2">Aprendiste {items.length} colores</p>
+        <p className="text-lg text-primary font-bold mt-1">+{score} puntos</p>
       </div>
       <button onClick={onBack} className="btn-child bg-primary text-primary-foreground">Volver</button>
     </div>
@@ -81,31 +78,16 @@ const ColorsActivity = ({ onBack, onPoints }: Props) => {
       <div className="w-full bg-muted rounded-full h-3 mb-6">
         <div className="bg-primary h-3 rounded-full transition-all duration-500" style={{ width: `${((idx + 1) / items.length) * 100}%` }} />
       </div>
-      <div className="flex flex-col items-center gap-4 mb-6 animate-bounce-in" key={idx}>
-        <div className="w-32 h-32 rounded-full border-4 border-card shadow-lg" style={{ backgroundColor: current.hex }} />
+      <div className="flex-1 flex flex-col items-center justify-center gap-4" key={idx}>
+        {!tapped && <p className="text-muted-foreground font-semibold">¡Toca el color!</p>}
+        <button onClick={handleTap} className="animate-bounce-in active:scale-90 transition-transform">
+          <div className={`w-32 h-32 rounded-full ${current.color} shadow-xl flex items-center justify-center`}>
+            <span className="text-5xl">{current.emoji}</span>
+          </div>
+        </button>
         <h1 className="text-4xl font-black text-foreground">{current.name}</h1>
-        <p className="text-muted-foreground font-semibold">¿Cuál es {current.name.toLowerCase()}?</p>
+        {tapped && <VoiceButton targetWord={current.name} onMatch={handleVoiceMatch} />}
       </div>
-      <div className="grid grid-cols-2 gap-4 flex-1">
-        {current.options.map((opt, i) => {
-          let border = "border-border";
-          if (selected !== null) {
-            if (i === current.correct) border = "border-primary border-4";
-            else if (i === selected && !isCorrect) border = "border-destructive border-4";
-          }
-          return (
-            <button key={i} onClick={() => handleSelect(i)} className={`game-card bg-card border-2 ${border} flex flex-col items-center justify-center gap-2 min-h-[100px]`}>
-              <div className="w-16 h-16 rounded-full shadow-md" style={{ backgroundColor: opt.hex }} />
-              <span className="text-sm font-bold text-foreground">{opt.name}</span>
-            </button>
-          );
-        })}
-      </div>
-      {selected !== null && (
-        <div className="mt-4 text-center animate-bounce-in">
-          <span className="text-2xl font-black">{isCorrect ? "✅ ¡Correcto!" : "❌ Intenta de nuevo"}</span>
-        </div>
-      )}
     </div>
   );
 };
