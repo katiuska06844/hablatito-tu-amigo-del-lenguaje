@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import titoMascot from "@/assets/tito-mascot-new.png";
 import LessonsMap from "@/components/LessonsMap";
 import AndeanBackground from "@/components/AndeanBackground";
+import AvatarDisplay, { type AvatarConfig } from "@/components/AvatarDisplay";
 import { updateStreak } from "@/lib/streak";
 
 interface MainMenuProps {
@@ -14,10 +14,26 @@ interface MainMenuProps {
 
 const MainMenu = ({ onNavigate, points, medals, childName, onLogout }: MainMenuProps) => {
   const [streak, setStreak] = useState(0);
+  const [avatarConfig, setAvatarConfig] = useState<AvatarConfig>({ gender: "boy", skinTone: "medium", hairStyle: "short" });
+  const [equipped, setEquipped] = useState<string[]>([]);
 
   useEffect(() => {
     const s = updateStreak();
     setStreak(s);
+
+    const phone = localStorage.getItem("hablatito_current");
+    if (phone) {
+      const userData = localStorage.getItem(`hablatito_user_${phone}`);
+      if (userData) {
+        const data = JSON.parse(userData);
+        if (data.avatarConfig) setAvatarConfig(data.avatarConfig);
+      }
+      const shopData = localStorage.getItem(`hablatito_shop_${phone}`);
+      if (shopData) {
+        const sd = JSON.parse(shopData);
+        setEquipped(sd.equipped || []);
+      }
+    }
   }, []);
 
   return (
@@ -27,7 +43,11 @@ const MainMenu = ({ onNavigate, points, medals, childName, onLogout }: MainMenuP
       {/* Header */}
       <div className="flex items-center justify-between px-5 pt-6 pb-3 relative z-10">
         <div className="flex items-center gap-3">
-          <img src={titoMascot} alt="Tito" className="w-12 h-12 animate-float rounded-full border-2 border-white/60 shadow-md" width={48} height={48} />
+          <button onClick={() => onNavigate("profile")} className="active:scale-95 transition-transform">
+            <div className="w-12 h-12 rounded-full bg-white/80 flex items-center justify-center shadow-md overflow-hidden">
+              <AvatarDisplay equippedItems={equipped} size="sm" config={avatarConfig} />
+            </div>
+          </button>
           <div>
             <p className="text-base font-black text-foreground drop-shadow-sm">¡Hola, {childName}!</p>
             <p className="text-xs text-foreground/70 font-bold">⭐ {points} pts</p>
